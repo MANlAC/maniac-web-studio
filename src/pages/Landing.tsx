@@ -3,6 +3,7 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
+import { toast } from "sonner";
 import {
   Code2,
   Smartphone,
@@ -860,22 +861,55 @@ function ContactSection() {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const sendEmail = useAction(api.sendContactEmail.sendEmail);
+
+  const validate = (): boolean => {
+    const errors: Record<string, string> = {};
+    if (!formState.name.trim()) {
+      errors.name = "Name is required.";
+    } else if (formState.name.trim().length < 2) {
+      errors.name = "Name must be at least 2 characters.";
+    }
+    if (!formState.email.trim()) {
+      errors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim())) {
+      errors.email = "Please enter a valid email address.";
+    }
+    if (!formState.message.trim()) {
+      errors.message = "Message is required.";
+    } else if (formState.message.trim().length < 10) {
+      errors.message = "Message must be at least 10 characters.";
+    }
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) return;
     setSending(true);
     setSendError(null);
     try {
       await sendEmail({
-        name: formState.name,
-        email: formState.email,
-        message: formState.message,
+        name: formState.name.trim(),
+        email: formState.email.trim(),
+        message: formState.message.trim(),
+      });
+      toast.success("Message sent successfully!", {
+        description: "We'll get back to you within 24 hours.",
+        style: { background: "#0c0c18", border: "1px solid #00e5ff40", color: "#e8eaed" },
       });
       setSubmitted(true);
       setFormState({ name: "", email: "", message: "" });
+      setFieldErrors({});
     } catch (err) {
-      setSendError(err instanceof Error ? err.message : "Failed to send message. Please try again.");
+      const msg = err instanceof Error ? err.message : "Failed to send message. Please try again.";
+      setSendError(msg);
+      toast.error("Something went wrong", {
+        description: msg,
+        style: { background: "#0c0c18", border: "1px solid #ff406040", color: "#e8eaed" },
+      });
     } finally {
       setSending(false);
     }
@@ -1001,10 +1035,11 @@ function ContactSection() {
                     type="text"
                     required
                     value={formState.name}
-                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#12122a] border border-[#1a1a3e] text-[#e8eaed] text-sm focus:outline-none focus:border-[#00e5ff]/50 transition-colors placeholder:text-[#6b7280]/50"
+                    onChange={(e) => { setFormState({ ...formState, name: e.target.value }); if (fieldErrors.name) setFieldErrors((p) => { const n = { ...p }; delete n.name; return n; }); }}
+                    className={`w-full px-4 py-3 rounded-xl bg-[#12122a] border text-[#e8eaed] text-sm focus:outline-none transition-colors placeholder:text-[#6b7280]/50 ${fieldErrors.name ? "border-red-500/60 focus:border-red-500/80" : "border-[#1a1a3e] focus:border-[#00e5ff]/50"}`}
                     placeholder="Your name"
                   />
+                  {fieldErrors.name && <p className="text-red-400 text-xs mt-1.5 font-mono-tech">{fieldErrors.name}</p>}
                 </div>
                 <div>
                   <label className="block text-[#6b7280] text-xs font-mono-tech mb-2">Email</label>
@@ -1012,10 +1047,11 @@ function ContactSection() {
                     type="email"
                     required
                     value={formState.email}
-                    onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#12122a] border border-[#1a1a3e] text-[#e8eaed] text-sm focus:outline-none focus:border-[#00e5ff]/50 transition-colors placeholder:text-[#6b7280]/50"
+                    onChange={(e) => { setFormState({ ...formState, email: e.target.value }); if (fieldErrors.email) setFieldErrors((p) => { const n = { ...p }; delete n.email; return n; }); }}
+                    className={`w-full px-4 py-3 rounded-xl bg-[#12122a] border text-[#e8eaed] text-sm focus:outline-none transition-colors placeholder:text-[#6b7280]/50 ${fieldErrors.email ? "border-red-500/60 focus:border-red-500/80" : "border-[#1a1a3e] focus:border-[#00e5ff]/50"}`}
                     placeholder="you@email.com"
                   />
+                  {fieldErrors.email && <p className="text-red-400 text-xs mt-1.5 font-mono-tech">{fieldErrors.email}</p>}
                 </div>
                 <div>
                   <label className="block text-[#6b7280] text-xs font-mono-tech mb-2">Message</label>
@@ -1023,10 +1059,11 @@ function ContactSection() {
                     required
                     rows={4}
                     value={formState.message}
-                    onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#12122a] border border-[#1a1a3e] text-[#e8eaed] text-sm focus:outline-none focus:border-[#00e5ff]/50 transition-colors resize-none placeholder:text-[#6b7280]/50"
+                    onChange={(e) => { setFormState({ ...formState, message: e.target.value }); if (fieldErrors.message) setFieldErrors((p) => { const n = { ...p }; delete n.message; return n; }); }}
+                    className={`w-full px-4 py-3 rounded-xl bg-[#12122a] border text-[#e8eaed] text-sm focus:outline-none transition-colors resize-none placeholder:text-[#6b7280]/50 ${fieldErrors.message ? "border-red-500/60 focus:border-red-500/80" : "border-[#1a1a3e] focus:border-[#00e5ff]/50"}`}
                     placeholder="Tell us about your project..."
                   />
+                  {fieldErrors.message && <p className="text-red-400 text-xs mt-1.5 font-mono-tech">{fieldErrors.message}</p>}
                 </div>
                 {sendError && (
                   <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono-tech">
