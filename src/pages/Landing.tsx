@@ -108,7 +108,7 @@ function Navbar() {
           ))}
           <a
             href="#contact"
-            className="px-5 py-2 text-sm font-semibold bg-[#00e5ff] text-[#06060e] rounded-lg hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-mono-tech"
+            className="px-5 py-2 text-sm font-semibold bg-[#00e5ff] text-[#06060e] rounded-lg hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-mono-tech glow-on-hover"
           >
             Get in Touch
           </a>
@@ -217,14 +217,14 @@ function HeroSection() {
         >
           <a
             href="#services"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider glow-on-hover"
           >
             Explore Our Services
             <ArrowRight size={16} />
           </a>
           <a
             href="#contact"
-            className="inline-flex items-center gap-2 px-8 py-3.5 border border-[#1a1a3e] text-[#c0c4cc] font-semibold rounded-xl hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 font-display text-sm tracking-wider"
+            className="inline-flex items-center gap-2 px-8 py-3.5 border border-[#1a1a3e] text-[#c0c4cc] font-semibold rounded-xl hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 font-display text-sm tracking-wider glow-on-hover-outline"
           >
             <Phone size={16} />
             Contact Us
@@ -382,11 +382,11 @@ function ServicesSection() {
             <button
               key={tag}
               onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono-tech border transition-all duration-300 ${
-                activeTag === tag
-                  ? "bg-[#00e5ff]/10 border-[#00e5ff]/40 text-[#00e5ff]"
-                  : "border-[#1a1a3e] text-[#6b7280] hover:border-[#00e5ff]/30 hover:text-[#c0c4cc]"
-              }`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono-tech border transition-all duration-300 glow-on-hover-outline ${
+              activeTag === tag
+                ? "bg-[#00e5ff]/10 border-[#00e5ff]/40 text-[#00e5ff]"
+                : "border-[#1a1a3e] text-[#6b7280] hover:border-[#00e5ff]/30 hover:text-[#c0c4cc]"
+            }`}
             >
               {tag}
             </button>
@@ -414,7 +414,7 @@ function ServicesSection() {
                   <span className="text-[#00e5ff] font-mono-tech text-xs font-semibold">{s.price}</span>
                   <a
                     href="#contact"
-                    className="text-[#6b7280] hover:text-[#00e5ff] text-xs font-mono-tech transition-colors flex items-center gap-1"
+                    className="text-[#6b7280] hover:text-[#00e5ff] text-xs font-mono-tech transition-colors flex items-center gap-1 glow-on-hover-outline"
                   >
                     Inquire <ArrowRight size={12} />
                   </a>
@@ -435,7 +435,7 @@ function ServicesSection() {
             <p className="text-[#6b7280] font-mono-tech text-sm">No services match your search.</p>
             <button
               onClick={() => { setQuery(""); setActiveTag(null); }}
-              className="mt-4 px-4 py-2 text-xs font-mono-tech text-[#00e5ff] border border-[#00e5ff]/30 rounded-lg hover:bg-[#00e5ff]/5 transition-all duration-300"
+              className="mt-4 px-4 py-2 text-xs font-mono-tech text-[#00e5ff] border border-[#00e5ff]/30 rounded-lg hover:bg-[#00e5ff]/5 transition-all duration-300 glow-on-hover-outline"
             >
               Clear Filters
             </button>
@@ -561,7 +561,7 @@ function ShowcaseSection() {
                   href="https://maniacshop.freebuff.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-xs tracking-wider"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-xs tracking-wider glow-on-hover"
                 >
                   <Play size={14} />
                   View Live Demo
@@ -570,7 +570,7 @@ function ShowcaseSection() {
                   href="https://github.com/MANlAC/modern-shop-app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 border border-[#1a1a3e] text-[#c0c4cc] rounded-xl hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 font-display text-xs tracking-wider"
+                  className="inline-flex items-center gap-2 px-6 py-3 border border-[#1a1a3e] text-[#c0c4cc] rounded-xl hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 font-display text-xs tracking-wider glow-on-hover-outline"
                 >
                   <Github size={14} />
                   Source Code
@@ -632,7 +632,7 @@ function TicTacToe() {
         </p>
         <button
           onClick={reset}
-          className="px-4 py-1.5 text-xs font-mono-tech border border-[#1a1a3e] text-[#6b7280] rounded-lg hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300"
+          className="px-4 py-1.5 text-xs font-mono-tech border border-[#1a1a3e] text-[#6b7280] rounded-lg hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 glow-on-hover-outline"
         >
           Reset
         </button>
@@ -661,7 +661,7 @@ function TicTacToe() {
         </p>
         <button
           onClick={reset}
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#00e5ff]/10 border border-[#00e5ff]/30 text-[#00e5ff] text-sm font-mono-tech font-semibold rounded-xl hover:bg-[#00e5ff]/20 hover:border-[#00e5ff]/50 transition-all duration-300"
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#00e5ff]/10 border border-[#00e5ff]/30 text-[#00e5ff] text-sm font-mono-tech font-semibold rounded-xl hover:bg-[#00e5ff]/20 hover:border-[#00e5ff]/50 transition-all duration-300 glow-on-hover-outline"
         >
           ↻ Reset Game & Play Again
         </button>
@@ -753,13 +753,13 @@ function GallerySection() {
         <div className="relative">
           <button
             onClick={() => scroll(-1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#0c0c18]/80 border border-[#1a1a3e] flex items-center justify-center text-[#00e5ff] hover:border-[#00e5ff]/40 transition-all duration-300 backdrop-blur"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#0c0c18]/80 border border-[#1a1a3e] flex items-center justify-center text-[#00e5ff] hover:border-[#00e5ff]/40 transition-all duration-300 backdrop-blur glow-on-hover-outline"
           >
             <ChevronDown size={18} className="rotate-90" />
           </button>
           <button
             onClick={() => scroll(1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#0c0c18]/80 border border-[#1a1a3e] flex items-center justify-center text-[#00e5ff] hover:border-[#00e5ff]/40 transition-all duration-300 backdrop-blur"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#0c0c18]/80 border border-[#1a1a3e] flex items-center justify-center text-[#00e5ff] hover:border-[#00e5ff]/40 transition-all duration-300 backdrop-blur glow-on-hover-outline"
           >
             <ChevronDown size={18} className="-rotate-90" />
           </button>
@@ -1016,7 +1016,7 @@ function ContactSection() {
                   </p>
                   <button
                     onClick={() => { setSubmitted(false); setFormState({ name: "", email: "", message: "" }); }}
-                    className="mt-4 px-4 py-2 text-xs font-mono-tech text-[#00e5ff] border border-[#00e5ff]/30 rounded-lg hover:bg-[#00e5ff]/5 transition-all duration-300"
+                    className="mt-4 px-4 py-2 text-xs font-mono-tech text-[#00e5ff] border border-[#00e5ff]/30 rounded-lg hover:bg-[#00e5ff]/5 transition-all duration-300 glow-on-hover-outline"
                   >
                     Send Another
                   </button>
@@ -1075,7 +1075,7 @@ function ContactSection() {
                 <button
                   type="submit"
                   disabled={sending}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider disabled:opacity-50 disabled:cursor-not-allowed glow-on-hover"
                 >
                   {sending ? (
                     <>

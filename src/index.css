@@ -178,6 +178,34 @@
   }
 }
 
+/* Global glow + expand hover for all interactive elements */
+a, button {
+  transition-property: transform, box-shadow, color, background-color, border-color, opacity;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-duration: 0.3s;
+}
+a:not([role="button"]):not([class*="rounded"]):not(.glow-on-hover),
+button:not(.glow-on-hover) {
+  /* skip plain text links */
+}
+.glow-on-hover:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #00e5ff44, 0 0 40px #00e5ff22, 0 0 60px #00e5ff11;
+}
+.glow-on-hover:active {
+  transform: scale(0.98);
+}
+.glow-on-hover-outline:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #00e5ff33, 0 0 30px #00e5ff15;
+  border-color: #00e5ff66 !important;
+  color: #00e5ff !important;
+}
+.glow-on-hover-outline:active {
+  transform: scale(0.98);
+}
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
