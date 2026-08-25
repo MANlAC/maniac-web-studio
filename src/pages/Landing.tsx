@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
@@ -6,8 +6,8 @@ import {
   Smartphone,
   Globe,
   Mail,
+  Phone,
   ChevronDown,
-  ExternalLink,
   Play,
   Github,
   Cpu,
@@ -18,6 +18,10 @@ import {
   Send,
   Menu,
   X,
+  Search,
+  Star,
+  Quote,
+  MessageSquare,
 } from "lucide-react";
 
 /* ─── Reusable scroll-trigger wrapper ─── */
@@ -70,6 +74,7 @@ function Navbar() {
     { label: "Showcase", href: "#showcase" },
     { label: "Game", href: "#game" },
     { label: "Gallery", href: "#gallery" },
+    { label: "Testimonials", href: "#testimonials" },
     { label: "Contact", href: "#contact" },
   ];
 
@@ -86,7 +91,7 @@ function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="#" className="font-display text-xl font-bold tracking-wider text-[#00e5ff] text-glow">
-          MANIAC
+          MANIAC<span className="text-[#7b2ff7]">.</span>
         </a>
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
@@ -112,7 +117,6 @@ function Navbar() {
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-      {/* Mobile menu */}
       {mobileOpen && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -151,7 +155,6 @@ function HeroSection() {
       ref={ref}
       className="relative min-h-screen flex items-center justify-center grid-bg overflow-hidden"
     >
-      {/* Background orbs */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#00e5ff]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#7b2ff7]/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -163,7 +166,7 @@ function HeroSection() {
           className="mb-6"
         >
           <span className="inline-block px-4 py-1.5 rounded-full border border-[#00e5ff]/30 bg-[#00e5ff]/5 text-[#00e5ff] text-xs font-mono-tech tracking-widest uppercase">
-            Future Tech Solutions
+            Maniac Web Studio
           </span>
         </motion.div>
 
@@ -173,9 +176,9 @@ function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="font-display text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] mb-6"
         >
-          <span className="text-[#e8eaed]">We Build</span>
+          <span className="text-[#e8eaed]">Bold Ideas.</span>
           <br />
-          <span className="text-[#00e5ff] text-glow">The Future</span>
+          <span className="text-[#00e5ff] text-glow">Brilliant Code.</span>
         </motion.h1>
 
         <motion.p
@@ -184,8 +187,8 @@ function HeroSection() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-[#6b7280] text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed"
         >
-          <span className="text-[#c0c4cc] font-semibold">MANIAC</span> is a next-gen technology studio crafting
-          world-class websites, apps, and digital experiences.
+          <span className="text-[#c0c4cc] font-semibold">Maniac Web Studio</span> crafts premium websites,
+          mobile apps, and digital products that help businesses stand out and scale.
         </motion.p>
 
         <motion.div
@@ -194,12 +197,12 @@ function HeroSection() {
           transition={{ duration: 0.8, delay: 0.55 }}
           className="mb-12"
         >
-          <p className="text-[#c0c4cc] text-sm font-mono-tech mb-2">Created by</p>
+          <p className="text-[#c0c4cc] text-sm font-mono-tech mb-2">Founded by</p>
           <h2 className="font-display text-2xl md:text-3xl font-bold text-[#e8eaed]">
             Dinesh Kumar Bohara
           </h2>
           <p className="text-[#00e5ff]/70 text-sm font-mono-tech mt-1">
-            Undergraduate Student
+            Undergraduate Student & Full-Stack Developer
           </p>
         </motion.div>
 
@@ -213,14 +216,14 @@ function HeroSection() {
             href="#services"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider"
           >
-            Explore Our Work
+            Explore Our Services
             <ArrowRight size={16} />
           </a>
           <a
             href="#contact"
             className="inline-flex items-center gap-2 px-8 py-3.5 border border-[#1a1a3e] text-[#c0c4cc] font-semibold rounded-xl hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 font-display text-sm tracking-wider"
           >
-            <Mail size={16} />
+            <Phone size={16} />
             Contact Us
           </a>
         </motion.div>
@@ -240,51 +243,101 @@ function HeroSection() {
   );
 }
 
-/* ─── Services ─── */
+/* ─── Services Catalog ─── */
 const services = [
   {
     icon: Globe,
     title: "Web Development",
-    desc: "Cutting-edge, responsive websites built with the latest frameworks and stunning design.",
+    desc: "Custom-built, responsive websites using modern frameworks like React and Next.js — designed to convert visitors into customers.",
     color: "#00e5ff",
+    tags: ["react", "next.js", "frontend", "responsive"],
+    price: "From $500",
   },
   {
     icon: Smartphone,
     title: "App Development",
-    desc: "Native and cross-platform mobile applications engineered for performance and delight.",
+    desc: "Native and cross-platform mobile applications for iOS and Android, engineered for speed, reliability, and a seamless user experience.",
     color: "#7b2ff7",
+    tags: ["ios", "android", "react native", "flutter"],
+    price: "From $1,200",
   },
   {
     icon: Cpu,
     title: "AI & Automation",
-    desc: "Intelligent systems and workflows that supercharge your operations with machine learning.",
+    desc: "Intelligent systems, chatbots, and workflow automations powered by machine learning — built to save you time and reduce costs.",
     color: "#00ff88",
+    tags: ["ai", "chatbot", "automation", "ml"],
+    price: "From $800",
   },
   {
     icon: Shield,
     title: "Cybersecurity",
-    desc: "Enterprise-grade security auditing, penetration testing, and hardening for your stack.",
+    desc: "Comprehensive security audits, vulnerability assessments, and hardening strategies to keep your business and data protected.",
     color: "#ff6b35",
+    tags: ["security", "audit", "penetration testing"],
+    price: "From $400",
   },
   {
     icon: Layers,
     title: "Cloud Solutions",
-    desc: "Scalable cloud infrastructure, DevOps pipelines, and serverless architecture design.",
+    desc: "Scalable cloud infrastructure, CI/CD pipelines, and serverless architectures on AWS, GCP, or Azure — optimized for performance and cost.",
     color: "#00e5ff",
+    tags: ["aws", "gcp", "azure", "devops", "serverless"],
+    price: "From $600",
   },
   {
     icon: Zap,
     title: "UI/UX Design",
-    desc: "Research-driven interfaces with pixel-perfect aesthetics and seamless user journeys.",
+    desc: "Research-driven interface design with pixel-perfect execution — wireframes, prototypes, and polished visuals that users love.",
     color: "#7b2ff7",
+    tags: ["figma", "prototype", "wireframe", "design system"],
+    price: "From $350",
+  },
+  {
+    icon: Code2,
+    title: "E-Commerce Solutions",
+    desc: "End-to-end online stores with secure checkout, inventory management, and analytics — ready to launch and scale your business.",
+    color: "#00ff88",
+    tags: ["shopify", "stripe", "ecommerce", "payment"],
+    price: "From $900",
+  },
+  {
+    icon: Globe,
+    title: "SEO & Performance",
+    desc: "Technical SEO, Core Web Vitals optimization, and speed tuning to push your site to the top of search rankings.",
+    color: "#ff6b35",
+    tags: ["seo", "performance", "analytics", "speed"],
+    price: "From $250",
   },
 ];
 
 function ServicesSection() {
+  const [query, setQuery] = useState("");
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+
+  const allTags = useMemo(() => {
+    const tags = new Set<string>();
+    services.forEach((s) => s.tags.forEach((t) => tags.add(t)));
+    return Array.from(tags).sort();
+  }, []);
+
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase();
+    return services.filter((s) => {
+      const matchesQuery =
+        !q ||
+        s.title.toLowerCase().includes(q) ||
+        s.desc.toLowerCase().includes(q) ||
+        s.tags.some((t) => t.includes(q));
+      const matchesTag = !activeTag || s.tags.includes(activeTag);
+      return matchesQuery && matchesTag;
+    });
+  }, [query, activeTag]);
+
   return (
     <section id="services" className="py-32 relative">
       <div className="max-w-7xl mx-auto px-6">
-        <FadeIn className="text-center mb-20">
+        <FadeIn className="text-center mb-12">
           <span className="inline-block px-4 py-1.5 rounded-full border border-[#7b2ff7]/30 bg-[#7b2ff7]/5 text-[#7b2ff7] text-xs font-mono-tech tracking-widest uppercase mb-6">
             What We Do
           </span>
@@ -292,14 +345,60 @@ function ServicesSection() {
             Our <span className="text-[#00e5ff] text-glow">Services</span>
           </h2>
           <p className="text-[#6b7280] max-w-xl mx-auto">
-            End-to-end technology solutions tailored for the future of business.
+            Premium technology solutions built to help your business grow. Browse the full catalog below.
           </p>
         </FadeIn>
 
+        {/* Search bar */}
+        <FadeIn className="max-w-2xl mx-auto mb-8">
+          <div className="relative">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6b7280]" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search services (e.g. react, security, design)..."
+              className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#0c0c18] border border-[#1a1a3e] text-[#e8eaed] text-sm focus:outline-none focus:border-[#00e5ff]/50 transition-colors placeholder:text-[#6b7280]/50 font-mono-tech"
+            />
+          </div>
+        </FadeIn>
+
+        {/* Tag filters */}
+        <FadeIn className="flex flex-wrap justify-center gap-2 mb-12">
+          <button
+            onClick={() => setActiveTag(null)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono-tech border transition-all duration-300 ${
+              !activeTag
+                ? "bg-[#00e5ff]/10 border-[#00e5ff]/40 text-[#00e5ff]"
+                : "border-[#1a1a3e] text-[#6b7280] hover:border-[#00e5ff]/30 hover:text-[#c0c4cc]"
+            }`}
+          >
+            All
+          </button>
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono-tech border transition-all duration-300 ${
+                activeTag === tag
+                  ? "bg-[#00e5ff]/10 border-[#00e5ff]/40 text-[#00e5ff]"
+                  : "border-[#1a1a3e] text-[#6b7280] hover:border-[#00e5ff]/30 hover:text-[#c0c4cc]"
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </FadeIn>
+
+        {/* Results count */}
+        <p className="text-[#6b7280] text-xs font-mono-tech text-center mb-8">
+          {filtered.length} service{filtered.length !== 1 ? "s" : ""} found
+        </p>
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((s, i) => (
-            <FadeIn key={s.title} delay={i * 0.1}>
-              <div className="group relative p-8 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60 hover:border-[#00e5ff]/30 transition-all duration-500 h-full">
+          {filtered.map((s, i) => (
+            <FadeIn key={s.title} delay={i * 0.08}>
+              <div className="group relative p-8 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60 hover:border-[#00e5ff]/30 transition-all duration-500 h-full flex flex-col">
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110"
                   style={{ background: `${s.color}15` }}
@@ -307,17 +406,38 @@ function ServicesSection() {
                   <s.icon size={24} style={{ color: s.color }} />
                 </div>
                 <h3 className="font-display text-lg font-bold text-[#e8eaed] mb-3">{s.title}</h3>
-                <p className="text-[#6b7280] text-sm leading-relaxed">{s.desc}</p>
+                <p className="text-[#6b7280] text-sm leading-relaxed flex-1">{s.desc}</p>
+                <div className="mt-5 pt-4 border-t border-[#1a1a3e]/60 flex items-center justify-between">
+                  <span className="text-[#00e5ff] font-mono-tech text-xs font-semibold">{s.price}</span>
+                  <a
+                    href="#contact"
+                    className="text-[#6b7280] hover:text-[#00e5ff] text-xs font-mono-tech transition-colors flex items-center gap-1"
+                  >
+                    Inquire <ArrowRight size={12} />
+                  </a>
+                </div>
                 <div
                   className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{
-                    background: `radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${s.color}08, transparent 60%)`,
+                    background: `radial-gradient(400px circle at 50% 50%, ${s.color}08, transparent 60%)`,
                   }}
                 />
               </div>
             </FadeIn>
           ))}
         </div>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-[#6b7280] font-mono-tech text-sm">No services match your search.</p>
+            <button
+              onClick={() => { setQuery(""); setActiveTag(null); }}
+              className="mt-4 px-4 py-2 text-xs font-mono-tech text-[#00e5ff] border border-[#00e5ff]/30 rounded-lg hover:bg-[#00e5ff]/5 transition-all duration-300"
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -338,7 +458,7 @@ function ShowcaseSection() {
             Modern <span className="text-[#00e5ff] text-glow">Shop App</span>
           </h2>
           <p className="text-[#6b7280] max-w-xl mx-auto">
-            A full-stack e-commerce experience built with cutting-edge tech.
+            A full-stack e-commerce platform showcasing our development capabilities.
           </p>
         </FadeIn>
 
@@ -346,7 +466,6 @@ function ShowcaseSection() {
           <FadeIn direction="right">
             <div className="relative rounded-3xl overflow-hidden bg-[#0c0c18] border border-[#1a1a3e] p-1">
               <div className="rounded-2xl bg-gradient-to-br from-[#0c0c18] via-[#12122a] to-[#0c0c18] p-8 md:p-12">
-                {/* Fake app screen */}
                 <div className="bg-[#06060e] rounded-2xl border border-[#1a1a3e] overflow-hidden">
                   <div className="p-4 border-b border-[#1a1a3e] flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-[#ff4060]/60" />
@@ -404,8 +523,8 @@ function ShowcaseSection() {
                 </h3>
                 <p className="text-[#6b7280] leading-relaxed">
                   ModernShop is our flagship demo — a blazing-fast, fully responsive e-commerce
-                  platform with real-time inventory, AI-powered recommendations, and a checkout
-                  experience that converts.
+                  platform with real-time inventory tracking, AI-powered recommendations, and a checkout
+                  flow designed to maximize conversions.
                 </p>
               </div>
 
@@ -461,9 +580,9 @@ function ShowcaseSection() {
 /* ─── Tic Tac Toe ─── */
 type Cell = "X" | "O" | null;
 const WINNING = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-  [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
-  [0, 4, 8], [2, 4, 6],             // diags
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],
+  [0, 4, 8], [2, 4, 6],
 ];
 
 function checkWinner(board: Cell[]): Cell | "draw" {
@@ -568,27 +687,27 @@ function GameSection() {
 const galleryImages = [
   {
     url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
-    alt: "Circuit board close-up",
+    alt: "Circuit Board Close-Up",
   },
   {
     url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
-    alt: "Cybersecurity concept",
+    alt: "Cybersecurity Concept",
   },
   {
     url: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
-    alt: "Abstract neon lines",
+    alt: "Abstract Neon Lines",
   },
   {
     url: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80",
-    alt: "Digital data streams",
+    alt: "Digital Data Streams",
   },
   {
     url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
-    alt: "Globe with data network",
+    alt: "Globe with Data Network",
   },
   {
     url: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
-    alt: "Matrix-style code",
+    alt: "Matrix-Style Code",
   },
 ];
 
@@ -634,7 +753,7 @@ function GallerySection() {
 
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 px-12 scrollbar-hide"
+            className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 px-12"
             style={{ scrollbarWidth: "none" }}
           >
             {galleryImages.map((img, i) => (
@@ -660,6 +779,71 @@ function GallerySection() {
   );
 }
 
+/* ─── Testimonials / Comments ─── */
+const testimonials = [
+  {
+    name: "Aarav Sharma",
+    role: "Founder, Nexus Digital",
+    text: "Maniac Web Studio delivered a stunning e-commerce platform that tripled our online sales within the first quarter. The attention to detail and performance is outstanding.",
+    rating: 5,
+  },
+  {
+    name: "Sita Thapa",
+    role: "CEO, GreenLeaf Organics",
+    text: "Working with Dinesh was a game-changer. He built us a custom inventory management system that saved countless hours every week. Professional, fast, and incredibly skilled.",
+    rating: 5,
+  },
+  {
+    name: "Rajan Gurung",
+    role: "CTO, HimalayaTech",
+    text: "The mobile app they developed for us handles thousands of daily users with zero downtime. The code quality and architecture are top-notch. Highly recommended.",
+    rating: 5,
+  },
+];
+
+function TestimonialsSection() {
+  return (
+    <section id="testimonials" className="py-32 relative">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00ff88]/20 to-transparent" />
+      <div className="max-w-7xl mx-auto px-6">
+        <FadeIn className="text-center mb-16">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-[#00ff88]/30 bg-[#00ff88]/5 text-[#00ff88] text-xs font-mono-tech tracking-widest uppercase mb-6">
+            What Clients Say
+          </span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-[#e8eaed] mb-4">
+            Client <span className="text-[#00e5ff] text-glow">Testimonials</span>
+          </h2>
+          <p className="text-[#6b7280] max-w-xl mx-auto">
+            Real feedback from businesses we've helped transform through technology.
+          </p>
+        </FadeIn>
+
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {testimonials.map((t, i) => (
+            <FadeIn key={t.name} delay={i * 0.15}>
+              <div className="p-8 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60 h-full flex flex-col">
+                <Quote size={24} className="text-[#00e5ff]/30 mb-4" />
+                <p className="text-[#c0c4cc] text-sm leading-relaxed flex-1 mb-6">
+                  "{t.text}"
+                </p>
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: t.rating }).map((_, j) => (
+                    <Star key={j} size={14} className="text-[#ff6b35] fill-[#ff6b35]" />
+                  ))}
+                </div>
+                <div className="pt-4 border-t border-[#1a1a3e]/60">
+                  <p className="text-[#e8eaed] text-sm font-semibold">{t.name}</p>
+                  <p className="text-[#6b7280] text-xs font-mono-tech">{t.role}</p>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─── Contact ─── */
 function ContactSection() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
@@ -669,7 +853,7 @@ function ContactSection() {
     e.preventDefault();
     const { name, email, message } = formState;
     window.open(
-      `mailto:dineshbohara2073@gmail.com?subject=MANIAC Inquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(
+      `mailto:dineshbohara2073@gmail.com?subject=Maniac Web Studio Inquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(
         `Name: ${name}\nEmail: ${email}\n\n${message}`
       )}`,
       "_blank"
@@ -689,20 +873,21 @@ function ContactSection() {
             Get in <span className="text-[#00e5ff] text-glow">Touch</span>
           </h2>
           <p className="text-[#6b7280] max-w-xl mx-auto">
-            Ready to build something extraordinary? We'd love to hear from you.
+            Have a project in mind or just want to say hello? We'd love to hear from you.
           </p>
         </FadeIn>
 
         <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
           <FadeIn direction="right">
-            <div className="space-y-8">
+            <div className="space-y-6">
+              {/* Email card */}
               <div className="p-6 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#00e5ff]/10 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-[#00e5ff]/10 flex items-center justify-center shrink-0">
                     <Mail size={20} className="text-[#00e5ff]" />
                   </div>
                   <div>
-                    <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Email Us</p>
+                    <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Email</p>
                     <a
                       href="mailto:dineshbohara2073@gmail.com"
                       className="text-[#e8eaed] hover:text-[#00e5ff] transition-colors text-sm font-semibold"
@@ -713,23 +898,43 @@ function ContactSection() {
                 </div>
               </div>
 
+              {/* Phone card */}
               <div className="p-6 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#7b2ff7]/10 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-[#00ff88]/10 flex items-center justify-center shrink-0">
+                    <Phone size={20} className="text-[#00ff88]" />
+                  </div>
+                  <div>
+                    <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Phone</p>
+                    <a
+                      href="tel:+9779749419302"
+                      className="text-[#e8eaed] hover:text-[#00e5ff] transition-colors text-sm font-semibold"
+                    >
+                      +977 9749419302
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Creator card */}
+              <div className="p-6 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[#7b2ff7]/10 flex items-center justify-center shrink-0">
                     <Globe size={20} className="text-[#7b2ff7]" />
                   </div>
                   <div>
-                    <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Created By</p>
+                    <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Founded by</p>
                     <p className="text-[#e8eaed] text-sm font-semibold">Dinesh Kumar Bohara</p>
                     <p className="text-[#00e5ff]/60 text-xs font-mono-tech">Undergraduate Student</p>
                   </div>
                 </div>
               </div>
 
+              {/* Response time */}
               <div className="p-6 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#00ff88]/10 flex items-center justify-center">
-                    <Zap size={20} className="text-[#00ff88]" />
+                  <div className="w-12 h-12 rounded-xl bg-[#ff6b35]/10 flex items-center justify-center shrink-0">
+                    <Zap size={20} className="text-[#ff6b35]" />
                   </div>
                   <div>
                     <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Response Time</p>
@@ -766,6 +971,10 @@ function ContactSection() {
                 onSubmit={handleSubmit}
                 className="space-y-5 p-8 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60"
               >
+                <div className="flex items-center gap-2 mb-2">
+                  <MessageSquare size={16} className="text-[#00e5ff]" />
+                  <span className="text-[#e8eaed] text-sm font-semibold font-display">Send a Message</span>
+                </div>
                 <div>
                   <label className="block text-[#6b7280] text-xs font-mono-tech mb-2">Name</label>
                   <input
@@ -820,12 +1029,36 @@ function Footer() {
   return (
     <footer className="border-t border-[#1a1a3e]/60 py-12">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        <p className="font-display text-lg font-bold text-[#00e5ff] text-glow mb-3">MANIAC</p>
-        <p className="text-[#6b7280] text-sm mb-2">
-          Building the future of technology — one pixel at a time.
+        <p className="font-display text-lg font-bold text-[#00e5ff] text-glow mb-3">
+          MANIAC<span className="text-[#7b2ff7]">.</span>
         </p>
+        <p className="text-[#6b7280] text-sm mb-4">
+          Crafting premium digital experiences for forward-thinking businesses.
+        </p>
+        <div className="flex justify-center gap-6 mb-6">
+          <a
+            href="mailto:dineshbohara2073@gmail.com"
+            className="text-[#6b7280] hover:text-[#00e5ff] transition-colors"
+          >
+            <Mail size={18} />
+          </a>
+          <a
+            href="tel:+9779749419302"
+            className="text-[#6b7280] hover:text-[#00e5ff] transition-colors"
+          >
+            <Phone size={18} />
+          </a>
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#6b7280] hover:text-[#00e5ff] transition-colors"
+          >
+            <Github size={18} />
+          </a>
+        </div>
         <p className="text-[#6b7280]/60 text-xs font-mono-tech">
-          &copy; {new Date().getFullYear()} MANIAC. Created by{" "}
+          &copy; {new Date().getFullYear()} Maniac Web Studio. Founded by{" "}
           <span className="text-[#c0c4cc]">Dinesh Kumar Bohara</span>.
         </p>
       </div>
@@ -847,6 +1080,8 @@ export default function Landing() {
       <GameSection />
       <div className="section-divider" />
       <GallerySection />
+      <div className="section-divider" />
+      <TestimonialsSection />
       <div className="section-divider" />
       <ContactSection />
       <Footer />
