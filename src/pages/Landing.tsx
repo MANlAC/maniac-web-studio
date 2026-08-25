@@ -1075,42 +1075,167 @@ function Footer() {
 }
 
 /* ─── Twinkling Stars ─── */
+type StarShape = "dot" | "diamond" | "cross" | "line" | "ring";
+
+interface StarData {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  duration: number;
+  delay: number;
+  opacity: number;
+  shape: StarShape;
+  color: string;
+  rotate: number;
+}
+
+function renderStarShape(shape: StarShape, color: string, size: number) {
+  switch (shape) {
+    case "dot":
+      return {
+        borderRadius: "50%",
+        background: `radial-gradient(circle, ${color} 0%, transparent 100%)`,
+        boxShadow: `0 0 ${size * 3}px ${color}`,
+      };
+    case "diamond":
+      return {
+        borderRadius: "2px",
+        background: color,
+        boxShadow: `0 0 ${size * 2}px ${color}`,
+        clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
+      };
+    case "cross":
+      return {
+        borderRadius: "0",
+        background: "transparent",
+        boxShadow: "none",
+      };
+    case "line":
+      return {
+        borderRadius: "1px",
+        background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
+        boxShadow: `0 0 ${size}px ${color}`,
+      };
+    case "ring":
+      return {
+        borderRadius: "50%",
+        background: "transparent",
+        border: `1px solid ${color}`,
+        boxShadow: `0 0 ${size}px ${color}, inset 0 0 ${size}px ${color}`,
+      };
+    default:
+      return { borderRadius: "50%", background: color };
+  }
+}
+
 function TwinklingStars() {
   const stars = useRef(
-    Array.from({ length: 80 }, (_, i) => ({
+    Array.from({ length: 90 }, (_, i): StarData => {
+      const shapes: StarShape[] = ["dot", "dot", "dot", "diamond", "cross", "line", "ring"];
+      const colors = [
+        "rgba(0, 229, 255, VAR)",
+        "rgba(123, 47, 247, VAR)",
+        "rgba(255, 255, 255, VAR)",
+        "rgba(0, 255, 136, VAR)",
+      ];
+      const baseOpacity = Math.random() * 0.7 + 0.15;
+      const colorTemplate = colors[Math.floor(Math.random() * colors.length)];
+      return {
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 3 + 0.5,
+        duration: Math.random() * 5 + 2,
+        delay: Math.random() * 6,
+        opacity: baseOpacity,
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+        color: colorTemplate.replace("VAR", String(baseOpacity)),
+        rotate: Math.random() * 360,
+      };
+    })
+  ).current;
+
+  const shootingStars = useRef(
+    Array.from({ length: 3 }, (_, i) => ({
       id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2.5 + 0.5,
-      duration: Math.random() * 4 + 2,
-      delay: Math.random() * 5,
-      opacity: Math.random() * 0.6 + 0.1,
+      startX: Math.random() * 60 + 10,
+      startY: Math.random() * 40,
+      angle: Math.random() * 20 + 25,
+      length: Math.random() * 80 + 60,
+      duration: Math.random() * 1.5 + 1.5,
+      delay: i * 4 + Math.random() * 3,
+      repeatDelay: 8 + Math.random() * 6,
     }))
   ).current;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* Static twinkling stars */}
       {stars.map((s) => (
         <motion.div
           key={s.id}
-          className="absolute rounded-full"
+          className="absolute"
           style={{
             left: `${s.x}%`,
             top: `${s.y}%`,
-            width: s.size,
-            height: s.size,
-            background: `radial-gradient(circle, rgba(0, 229, 255, ${s.opacity}) 0%, rgba(123, 47, 247, ${s.opacity * 0.5}) 100%)`,
-            boxShadow: `0 0 ${s.size * 2}px rgba(0, 229, 255, ${s.opacity * 0.4})`,
+            width: s.shape === "line" ? s.size * 4 : s.shape === "cross" ? s.size * 2 : s.size,
+            height: s.shape === "line" ? 1 : s.shape === "cross" ? s.size * 2 : s.size,
+            transform: `rotate(${s.rotate}deg)`,
+            ...renderStarShape(s.shape, s.color, s.size),
           }}
           animate={{
-            opacity: [s.opacity * 0.3, s.opacity, s.opacity * 0.3],
-            scale: [0.8, 1.2, 0.8],
+            opacity: [s.opacity * 0.2, s.opacity, s.opacity * 0.2],
+            scale: s.shape === "ring" ? [0.8, 1.1, 0.8] : [0.6, 1.3, 0.6],
           }}
           transition={{
             duration: s.duration,
             delay: s.delay,
             repeat: Infinity,
             ease: "easeInOut",
+          }}
+        >
+          {s.shape === "cross" && (
+            <>
+              <div
+                className="absolute top-1/2 left-0 -translate-y-1/2"
+                style={{ width: "100%", height: 1, background: s.color }}
+              />
+              <div
+                className="absolute left-1/2 top-0 -translate-x-1/2"
+                style={{ width: 1, height: "100%", background: s.color }}
+              />
+            </>
+          )}
+        </motion.div>
+      ))}
+
+      {/* Shooting stars */}
+      {shootingStars.map((ss) => (
+        <motion.div
+          key={`shoot-${ss.id}`}
+          className="absolute"
+          style={{
+            left: `${ss.startX}%`,
+            top: `${ss.startY}%`,
+            width: ss.length,
+            height: 1.5,
+            borderRadius: 1,
+            background: `linear-gradient(90deg, rgba(0, 229, 255, 0), rgba(0, 229, 255, 0.8) 40%, rgba(255, 255, 255, 1))`,
+            boxShadow: "0 0 8px rgba(0, 229, 255, 0.6), 0 0 20px rgba(0, 229, 255, 0.3)",
+            transform: `rotate(${ss.angle}deg)`,
+            transformOrigin: "left center",
+          }}
+          animate={{
+            x: [0, 500],
+            opacity: [0, 1, 1, 0],
+          }}
+          transition={{
+            duration: ss.duration,
+            delay: ss.delay,
+            repeat: Infinity,
+            repeatDelay: ss.repeatDelay,
+            ease: "easeOut",
           }}
         />
       ))}
