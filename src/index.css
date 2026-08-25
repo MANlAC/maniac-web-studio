@@ -204,7 +204,6 @@ button:not(.glow-on-hover) {
 .glow-on-hover-outline:active {
   transform: scale(0.98);
 }
-}
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
