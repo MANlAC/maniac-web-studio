@@ -567,7 +567,9 @@ function ShowcaseSection() {
                   View Live Demo
                 </a>
                 <a
-                  href="#contact"
+                  href="https://github.com/MANlAC/modern-shop-app"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 border border-[#1a1a3e] text-[#c0c4cc] rounded-xl hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 font-display text-xs tracking-wider"
                 >
                   <Github size={14} />
