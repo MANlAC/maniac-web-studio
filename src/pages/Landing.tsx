@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { useAction } from "convex/react";
+import { api } from "../convex/_generated/api";
 import {
   Code2,
   Smartphone,
@@ -856,17 +858,27 @@ function TestimonialsSection() {
 function ContactSection() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const sendEmail = useAction(api.sendContactEmail.sendEmail);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { name, email, message } = formState;
-    window.open(
-      `mailto:dineshbohara2073@gmail.com?subject=Maniac Web Studio Inquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(
-        `Name: ${name}\nEmail: ${email}\n\n${message}`
-      )}`,
-      "_blank"
-    );
-    setSubmitted(true);
+    setSending(true);
+    setSendError(null);
+    try {
+      await sendEmail({
+        name: formState.name,
+        email: formState.email,
+        message: formState.message,
+      });
+      setSubmitted(true);
+      setFormState({ name: "", email: "", message: "" });
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : "Failed to send message. Please try again.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -1016,12 +1028,27 @@ function ContactSection() {
                     placeholder="Tell us about your project..."
                   />
                 </div>
+                {sendError && (
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono-tech">
+                    {sendError}
+                  </div>
+                )}
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider"
+                  disabled={sending}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Send size={16} />
-                  Send Message
+                  {sending ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-[#06060e]/30 border-t-[#06060e] rounded-full animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={16} />
+                      Send Message
+                    </>
+                  )}
                 </button>
               </form>
             )}
@@ -1131,7 +1158,7 @@ function renderStarShape(shape: StarShape, color: string, size: number) {
 
 function TwinklingStars() {
   const stars = useRef(
-    Array.from({ length: 90 }, (_, i): StarData => {
+    Array.from({ length: 270 }, (_, i): StarData => {
       const shapes: StarShape[] = ["dot", "dot", "dot", "diamond", "cross", "line", "ring"];
       const colors = [
         "rgba(0, 229, 255, VAR)",
