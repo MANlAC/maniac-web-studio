@@ -25,6 +25,8 @@ import {
   Star,
   Quote,
   MessageSquare,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 /* ─── Reusable scroll-trigger wrapper ─── */
@@ -64,6 +66,21 @@ function FadeIn({
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window === "undefined") return "dark";
+    return (localStorage.getItem("maniac-theme") as "dark" | "light") || "dark";
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    try {
+      localStorage.setItem("maniac-theme", theme);
+    } catch {
+      /* ignore */
+    }
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -88,50 +105,66 @@ function Navbar() {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-[#06060e]/80 backdrop-blur-xl border-b border-[#1a1a3e]/60"
+          ? "bg-background/80 backdrop-blur-xl border-b border-border/60"
           : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="#" className="font-display text-xl font-bold tracking-wider text-[#00e5ff] text-glow">
-          MANIAC<span className="text-[#7b2ff7]">.</span>
+        <a href="#" className="font-display text-xl font-bold tracking-wider text-cyan text-glow">
+          MANIAC<span className="text-electric">.</span>
         </a>
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="text-sm text-[#6b7280] hover:text-[#00e5ff] transition-colors duration-300 font-mono-tech"
+              className="text-sm text-muted-foreground hover:text-cyan transition-colors duration-300 font-mono-tech"
             >
               {l.label}
             </a>
           ))}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-cyan hover:border-cyan/40 glow-on-hover-outline"
+          >
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
           <a
             href="#contact"
-            className="px-5 py-2 text-sm font-semibold bg-[#00e5ff] text-[#06060e] rounded-lg hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-mono-tech glow-on-hover"
+            className="px-5 py-2 text-sm font-semibold bg-cyan text-background rounded-lg hover:bg-cyan/90 transition-all duration-300 glow-cyan font-mono-tech glow-on-hover"
           >
             Get in Touch
           </a>
         </div>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-[#00e5ff]"
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="md:hidden w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground"
+          >
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden text-cyan"
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
       {mobileOpen && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-[#06060e]/95 backdrop-blur-xl border-b border-[#1a1a3e] px-6 py-4"
+          className="md:hidden bg-background/95 backdrop-blur-xl border-b border-border px-6 py-4"
         >
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setMobileOpen(false)}
-              className="block py-3 text-[#c0c4cc] hover:text-[#00e5ff] transition-colors font-mono-tech text-sm"
+              className="block py-3 text-secondary-foreground hover:text-cyan transition-colors font-mono-tech text-sm"
             >
               {l.label}
             </a>
@@ -158,8 +191,8 @@ function HeroSection() {
       ref={ref}
       className="relative min-h-screen flex items-center justify-center grid-bg overflow-hidden"
     >
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#00e5ff]/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#7b2ff7]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-electric/5 rounded-full blur-[120px] pointer-events-none" />
 
       <motion.div style={{ opacity, y }} className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <motion.div
@@ -168,7 +201,7 @@ function HeroSection() {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="mb-6"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full border border-[#00e5ff]/30 bg-[#00e5ff]/5 text-[#00e5ff] text-xs font-mono-tech tracking-widest uppercase">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-cyan/30 bg-cyan/5 text-cyan text-xs font-mono-tech tracking-widest uppercase">
             Maniac Web Studio
           </span>
         </motion.div>
@@ -179,18 +212,18 @@ function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="font-display text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] mb-6"
         >
-          <span className="text-[#e8eaed]">Bold Ideas.</span>
+          <span className="text-foreground">Bold Ideas.</span>
           <br />
-          <span className="text-[#00e5ff] text-glow">Brilliant Code.</span>
+          <span className="text-cyan text-glow">Brilliant Code.</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-[#6b7280] text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed"
+          className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed"
         >
-          <span className="text-[#c0c4cc] font-semibold">Maniac Web Studio</span> crafts premium websites,
+          <span className="text-secondary-foreground font-semibold">Maniac Web Studio</span> crafts premium websites,
           mobile apps, and digital products that help businesses stand out and scale.
         </motion.p>
 
@@ -200,11 +233,11 @@ function HeroSection() {
           transition={{ duration: 0.8, delay: 0.55 }}
           className="mb-12"
         >
-          <p className="text-[#c0c4cc] text-sm font-mono-tech mb-2">Founded by</p>
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-[#e8eaed]">
+          <p className="text-secondary-foreground text-sm font-mono-tech mb-2">Founded by</p>
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
             Dinesh Kumar Bohara
           </h2>
-          <p className="text-[#00e5ff]/70 text-sm font-mono-tech mt-1">
+          <p className="text-cyan/70 text-sm font-mono-tech mt-1">
             Undergraduate Student & Full-Stack Developer
           </p>
         </motion.div>
@@ -217,14 +250,14 @@ function HeroSection() {
         >
           <a
             href="#services"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider glow-on-hover"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-cyan text-background font-bold rounded-xl hover:bg-cyan/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider glow-on-hover"
           >
             Explore Our Services
             <ArrowRight size={16} />
           </a>
           <a
             href="#contact"
-            className="inline-flex items-center gap-2 px-8 py-3.5 border border-[#1a1a3e] text-[#c0c4cc] font-semibold rounded-xl hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 font-display text-sm tracking-wider glow-on-hover-outline"
+            className="inline-flex items-center gap-2 px-8 py-3.5 border border-border text-secondary-foreground font-semibold rounded-xl hover:border-cyan/40 hover:text-cyan transition-all duration-300 font-display text-sm tracking-wider glow-on-hover-outline"
           >
             <Phone size={16} />
             Contact Us
@@ -237,7 +270,7 @@ function HeroSection() {
           transition={{ duration: 1, delay: 1.2 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
         >
-          <a href="#services" className="text-[#00e5ff]/40 hover:text-[#00e5ff]/80 transition-colors">
+          <a href="#services" className="text-cyan/40 hover:text-cyan/80 transition-colors">
             <ChevronDown size={28} className="animate-bounce" />
           </a>
         </motion.div>
@@ -341,13 +374,13 @@ function ServicesSection() {
     <section id="services" className="py-32 relative">
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn className="text-center mb-12">
-          <span className="inline-block px-4 py-1.5 rounded-full border border-[#7b2ff7]/30 bg-[#7b2ff7]/5 text-[#7b2ff7] text-xs font-mono-tech tracking-widest uppercase mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-electric/30 bg-electric/5 text-electric text-xs font-mono-tech tracking-widest uppercase mb-6">
             What We Do
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-[#e8eaed] mb-4">
-            Our <span className="text-[#00e5ff] text-glow">Services</span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Our <span className="text-cyan text-glow">Services</span>
           </h2>
-          <p className="text-[#6b7280] max-w-xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto">
             Premium technology solutions built to help your business grow. Browse the full catalog below.
           </p>
         </FadeIn>
@@ -355,13 +388,13 @@ function ServicesSection() {
         {/* Search bar */}
         <FadeIn className="max-w-2xl mx-auto mb-8">
           <div className="relative">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6b7280]" />
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search services (e.g. react, security, design)..."
-              className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#0c0c18] border border-[#1a1a3e] text-[#e8eaed] text-sm focus:outline-none focus:border-[#00e5ff]/50 transition-colors placeholder:text-[#6b7280]/50 font-mono-tech"
+              className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-card border border-border text-foreground text-sm focus:outline-none focus:border-cyan/50 transition-colors placeholder:text-muted-foreground/50 font-mono-tech"
             />
           </div>
         </FadeIn>
@@ -372,8 +405,8 @@ function ServicesSection() {
             onClick={() => setActiveTag(null)}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono-tech border transition-all duration-300 ${
               !activeTag
-                ? "bg-[#00e5ff]/10 border-[#00e5ff]/40 text-[#00e5ff]"
-                : "border-[#1a1a3e] text-[#6b7280] hover:border-[#00e5ff]/30 hover:text-[#c0c4cc]"
+                ? "bg-cyan/10 border-cyan/40 text-cyan"
+                : "border-border text-muted-foreground hover:border-cyan/30 hover:text-secondary-foreground"
             }`}
           >
             All
@@ -384,8 +417,8 @@ function ServicesSection() {
               onClick={() => setActiveTag(activeTag === tag ? null : tag)}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono-tech border transition-all duration-300 glow-on-hover-outline ${
               activeTag === tag
-                ? "bg-[#00e5ff]/10 border-[#00e5ff]/40 text-[#00e5ff]"
-                : "border-[#1a1a3e] text-[#6b7280] hover:border-[#00e5ff]/30 hover:text-[#c0c4cc]"
+                ? "bg-cyan/10 border-cyan/40 text-cyan"
+                : "border-border text-muted-foreground hover:border-cyan/30 hover:text-secondary-foreground"
             }`}
             >
               {tag}
@@ -394,27 +427,27 @@ function ServicesSection() {
         </FadeIn>
 
         {/* Results count */}
-        <p className="text-[#6b7280] text-xs font-mono-tech text-center mb-8">
+        <p className="text-muted-foreground text-xs font-mono-tech text-center mb-8">
           {filtered.length} service{filtered.length !== 1 ? "s" : ""} found
         </p>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((s, i) => (
             <FadeIn key={s.title} delay={i * 0.08}>
-              <div className="group relative p-8 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60 hover:border-[#00e5ff]/30 transition-all duration-500 h-full flex flex-col">
+              <div className="group relative p-8 rounded-2xl bg-card border border-border/60 hover:border-cyan/30 transition-all duration-500 h-full flex flex-col">
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110"
                   style={{ background: `${s.color}15` }}
                 >
                   <s.icon size={24} style={{ color: s.color }} />
                 </div>
-                <h3 className="font-display text-lg font-bold text-[#e8eaed] mb-3">{s.title}</h3>
-                <p className="text-[#6b7280] text-sm leading-relaxed flex-1">{s.desc}</p>
-                <div className="mt-5 pt-4 border-t border-[#1a1a3e]/60 flex items-center justify-between">
-                  <span className="text-[#00e5ff] font-mono-tech text-xs font-semibold">{s.price}</span>
+                <h3 className="font-display text-lg font-bold text-foreground mb-3">{s.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed flex-1">{s.desc}</p>
+                <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between">
+                  <span className="text-cyan font-mono-tech text-xs font-semibold">{s.price}</span>
                   <a
                     href="#contact"
-                    className="text-[#6b7280] hover:text-[#00e5ff] text-xs font-mono-tech transition-colors flex items-center gap-1 glow-on-hover-outline"
+                    className="text-muted-foreground hover:text-cyan text-xs font-mono-tech transition-colors flex items-center gap-1 glow-on-hover-outline"
                   >
                     Inquire <ArrowRight size={12} />
                   </a>
@@ -432,10 +465,10 @@ function ServicesSection() {
 
         {filtered.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-[#6b7280] font-mono-tech text-sm">No services match your search.</p>
+            <p className="text-muted-foreground font-mono-tech text-sm">No services match your search.</p>
             <button
               onClick={() => { setQuery(""); setActiveTag(null); }}
-              className="mt-4 px-4 py-2 text-xs font-mono-tech text-[#00e5ff] border border-[#00e5ff]/30 rounded-lg hover:bg-[#00e5ff]/5 transition-all duration-300 glow-on-hover-outline"
+              className="mt-4 px-4 py-2 text-xs font-mono-tech text-cyan border border-cyan/30 rounded-lg hover:bg-cyan/5 transition-all duration-300 glow-on-hover-outline"
             >
               Clear Filters
             </button>
@@ -450,47 +483,47 @@ function ServicesSection() {
 function ShowcaseSection() {
   return (
     <section id="showcase" className="py-32 relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00e5ff]/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan/20 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn className="text-center mb-20">
-          <span className="inline-block px-4 py-1.5 rounded-full border border-[#00e5ff]/30 bg-[#00e5ff]/5 text-[#00e5ff] text-xs font-mono-tech tracking-widest uppercase mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-cyan/30 bg-cyan/5 text-cyan text-xs font-mono-tech tracking-widest uppercase mb-6">
             Featured Project
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-[#e8eaed] mb-4">
-            Modern <span className="text-[#00e5ff] text-glow">Shop App</span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Modern <span className="text-cyan text-glow">Shop App</span>
           </h2>
-          <p className="text-[#6b7280] max-w-xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto">
             A full-stack e-commerce platform showcasing our development capabilities.
           </p>
         </FadeIn>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <FadeIn direction="right">
-            <div className="relative rounded-3xl overflow-hidden bg-[#0c0c18] border border-[#1a1a3e] p-1">
-              <div className="rounded-2xl bg-gradient-to-br from-[#0c0c18] via-[#12122a] to-[#0c0c18] p-8 md:p-12">
-                <div className="bg-[#06060e] rounded-2xl border border-[#1a1a3e] overflow-hidden">
-                  <div className="p-4 border-b border-[#1a1a3e] flex items-center gap-2">
+            <div className="relative rounded-3xl overflow-hidden bg-card border border-border p-1">
+              <div className="rounded-2xl bg-gradient-to-br from-card via-secondary to-card p-8 md:p-12">
+                <div className="bg-background rounded-2xl border border-border overflow-hidden">
+                  <div className="p-4 border-b border-border flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-[#ff4060]/60" />
-                    <div className="w-3 h-3 rounded-full bg-[#ff6b35]/60" />
-                    <div className="w-3 h-3 rounded-full bg-[#00ff88]/60" />
-                    <span className="ml-3 text-[#6b7280] text-xs font-mono-tech">modernshop.app</span>
+                    <div className="w-3 h-3 rounded-full bg-orange/60" />
+                    <div className="w-3 h-3 rounded-full bg-neon-green/60" />
+                    <span className="ml-3 text-muted-foreground text-xs font-mono-tech">modernshop.app</span>
                   </div>
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
                       <div>
-                        <p className="text-[#6b7280] text-xs font-mono-tech">Welcome back</p>
-                        <p className="text-[#e8eaed] font-display font-bold">ModernShop</p>
+                        <p className="text-muted-foreground text-xs font-mono-tech">Welcome back</p>
+                        <p className="text-foreground font-display font-bold">ModernShop</p>
                       </div>
-                      <div className="w-10 h-10 rounded-full bg-[#00e5ff]/10 flex items-center justify-center text-[#00e5ff] text-sm font-bold">
+                      <div className="w-10 h-10 rounded-full bg-cyan/10 flex items-center justify-center text-cyan text-sm font-bold">
                         M
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-3 mb-6">
                       {["$12,840", "2,430", "98.2%"].map((v, i) => (
-                        <div key={i} className="bg-[#12122a] rounded-xl p-3 text-center">
-                          <p className="text-[#00e5ff] font-display font-bold text-sm">{v}</p>
-                          <p className="text-[#6b7280] text-[10px] font-mono-tech mt-1">
+                        <div key={i} className="bg-secondary rounded-xl p-3 text-center">
+                          <p className="text-cyan font-display font-bold text-sm">{v}</p>
+                          <p className="text-muted-foreground text-[10px] font-mono-tech mt-1">
                             {["Revenue", "Orders", "Uptime"][i]}
                           </p>
                         </div>
@@ -500,15 +533,15 @@ function ShowcaseSection() {
                       {["Nike Air Max 270", "iPhone 15 Pro", "MacBook Pro M3"].map((item, i) => (
                         <div
                           key={i}
-                          className="flex items-center justify-between p-3 bg-[#12122a] rounded-xl"
+                          className="flex items-center justify-between p-3 bg-secondary rounded-xl"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-[#7b2ff7]/10 flex items-center justify-center">
-                              <Code2 size={14} className="text-[#7b2ff7]" />
+                            <div className="w-8 h-8 rounded-lg bg-electric/10 flex items-center justify-center">
+                              <Code2 size={14} className="text-electric" />
                             </div>
-                            <span className="text-[#c0c4cc] text-xs font-mono-tech">{item}</span>
+                            <span className="text-secondary-foreground text-xs font-mono-tech">{item}</span>
                           </div>
-                          <span className="text-[#00ff88] text-xs font-mono-tech">In Stock</span>
+                          <span className="text-neon-green text-xs font-mono-tech">In Stock</span>
                         </div>
                       ))}
                     </div>
@@ -521,10 +554,10 @@ function ShowcaseSection() {
           <FadeIn direction="left">
             <div className="space-y-8">
               <div>
-                <h3 className="font-display text-3xl font-bold text-[#e8eaed] mb-4">
+                <h3 className="font-display text-3xl font-bold text-foreground mb-4">
                   A Complete Digital Storefront
                 </h3>
-                <p className="text-[#6b7280] leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   ModernShop is our flagship demo — a blazing-fast, fully responsive e-commerce
                   platform with real-time inventory tracking, AI-powered recommendations, and a checkout
                   flow designed to maximize conversions.
@@ -540,16 +573,16 @@ function ShowcaseSection() {
                 ].map((item) => (
                   <div key={item.label}>
                     <div className="flex justify-between text-sm mb-1.5">
-                      <span className="text-[#c0c4cc] font-mono-tech text-xs">{item.label}</span>
-                      <span className="text-[#00e5ff] font-mono-tech text-xs">{item.pct}%</span>
+                      <span className="text-secondary-foreground font-mono-tech text-xs">{item.label}</span>
+                      <span className="text-cyan font-mono-tech text-xs">{item.pct}%</span>
                     </div>
-                    <div className="h-1.5 bg-[#12122a] rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${item.pct}%` }}
                         transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                         viewport={{ once: true }}
-                        className="h-full bg-gradient-to-r from-[#00e5ff] to-[#7b2ff7] rounded-full"
+                        className="h-full bg-gradient-to-r from-cyan to-electric rounded-full"
                       />
                     </div>
                   </div>
@@ -561,7 +594,7 @@ function ShowcaseSection() {
                   href="https://maniacshop.freebuff.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-xs tracking-wider glow-on-hover"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-cyan text-background font-bold rounded-xl hover:bg-cyan/90 transition-all duration-300 glow-cyan font-display text-xs tracking-wider glow-on-hover"
                 >
                   <Play size={14} />
                   View Live Demo
@@ -570,7 +603,7 @@ function ShowcaseSection() {
                   href="https://github.com/MANlAC/modern-shop-app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 border border-[#1a1a3e] text-[#c0c4cc] rounded-xl hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 font-display text-xs tracking-wider glow-on-hover-outline"
+                  className="inline-flex items-center gap-2 px-6 py-3 border border-border text-secondary-foreground rounded-xl hover:border-cyan/40 hover:text-cyan transition-all duration-300 font-display text-xs tracking-wider glow-on-hover-outline"
                 >
                   <Github size={14} />
                   Source Code
@@ -623,7 +656,7 @@ function TicTacToe() {
   return (
     <div className="max-w-md mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <p className="text-[#6b7280] font-mono-tech text-sm">
+        <p className="text-muted-foreground font-mono-tech text-sm">
           {result
             ? result.winner === "draw"
               ? "It's a Draw!"
@@ -632,7 +665,7 @@ function TicTacToe() {
         </p>
         <button
           onClick={reset}
-          className="px-4 py-1.5 text-xs font-mono-tech border border-[#1a1a3e] text-[#6b7280] rounded-lg hover:border-[#00e5ff]/40 hover:text-[#00e5ff] transition-all duration-300 glow-on-hover-outline"
+          className="px-4 py-1.5 text-xs font-mono-tech border border-border text-muted-foreground rounded-lg hover:border-cyan/40 hover:text-cyan transition-all duration-300 glow-on-hover-outline"
         >
           Reset
         </button>
@@ -645,10 +678,10 @@ function TicTacToe() {
             disabled={!!cell || !!result}
             className={`aspect-square rounded-xl border flex items-center justify-center text-3xl font-display font-bold transition-all duration-300 ${
               cell === "X"
-                ? "border-[#00e5ff]/40 bg-[#00e5ff]/10 text-[#00e5ff] text-glow"
+                ? "border-cyan/40 bg-cyan/10 text-cyan text-glow"
                 : cell === "O"
-                ? "border-[#7b2ff7]/40 bg-[#7b2ff7]/10 text-[#7b2ff7] text-glow-purple"
-                : "border-[#1a1a3e] bg-[#12122a] hover:border-[#00e5ff]/30 hover:bg-[#1a1a3e]/60 text-transparent"
+                ? "border-electric/40 bg-electric/10 text-electric text-glow-purple"
+                : "border-border bg-secondary hover:border-cyan/30 hover:bg-border/60 text-transparent"
             }`}
           >
             {cell}
@@ -656,12 +689,12 @@ function TicTacToe() {
         ))}
       </div>
       <div className="mt-6 text-center">
-        <p className="text-[#6b7280] text-xs font-mono-tech mb-4">
+        <p className="text-muted-foreground text-xs font-mono-tech mb-4">
           Two-player local game — take turns on the same device
         </p>
         <button
           onClick={reset}
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#00e5ff]/10 border border-[#00e5ff]/30 text-[#00e5ff] text-sm font-mono-tech font-semibold rounded-xl hover:bg-[#00e5ff]/20 hover:border-[#00e5ff]/50 transition-all duration-300 glow-on-hover-outline"
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-cyan/10 border border-cyan/30 text-cyan text-sm font-mono-tech font-semibold rounded-xl hover:bg-cyan/20 hover:border-cyan/50 transition-all duration-300 glow-on-hover-outline"
         >
           ↻ Reset Game & Play Again
         </button>
@@ -673,21 +706,21 @@ function TicTacToe() {
 function GameSection() {
   return (
     <section id="game" className="py-32 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#7b2ff7]/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-electric/20 to-transparent" />
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full border border-[#00ff88]/30 bg-[#00ff88]/5 text-[#00ff88] text-xs font-mono-tech tracking-widest uppercase mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-neon-green/30 bg-neon-green/5 text-neon-green text-xs font-mono-tech tracking-widest uppercase mb-6">
             Interactive
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-[#e8eaed] mb-4">
-            Play <span className="text-[#00ff88] text-glow">Tic Tac Toe</span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Play <span className="text-neon-green text-glow">Tic Tac Toe</span>
           </h2>
-          <p className="text-[#6b7280] max-w-xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto">
             A quick two-player game. Challenge a friend right here.
           </p>
         </FadeIn>
         <FadeIn>
-          <div className="max-w-md mx-auto p-8 rounded-3xl bg-[#0c0c18] border border-[#1a1a3e]/60">
+          <div className="max-w-md mx-auto p-8 rounded-3xl bg-card border border-border/60">
             <TicTacToe />
           </div>
         </FadeIn>
@@ -735,17 +768,17 @@ function GallerySection() {
 
   return (
     <section id="gallery" className="py-32 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00e5ff]/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan/20 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full border border-[#00e5ff]/30 bg-[#00e5ff]/5 text-[#00e5ff] text-xs font-mono-tech tracking-widest uppercase mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-cyan/30 bg-cyan/5 text-cyan text-xs font-mono-tech tracking-widest uppercase mb-6">
             Visual Identity
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-[#e8eaed] mb-4">
-            Tech <span className="text-[#00e5ff] text-glow">Gallery</span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Tech <span className="text-cyan text-glow">Gallery</span>
           </h2>
-          <p className="text-[#6b7280] max-w-xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto">
             Glimpses of the digital world that inspires our craft.
           </p>
         </FadeIn>
@@ -753,13 +786,13 @@ function GallerySection() {
         <div className="relative">
           <button
             onClick={() => scroll(-1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#0c0c18]/80 border border-[#1a1a3e] flex items-center justify-center text-[#00e5ff] hover:border-[#00e5ff]/40 transition-all duration-300 backdrop-blur glow-on-hover-outline"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card/80 border border-border flex items-center justify-center text-cyan hover:border-cyan/40 transition-all duration-300 backdrop-blur glow-on-hover-outline"
           >
             <ChevronDown size={18} className="rotate-90" />
           </button>
           <button
             onClick={() => scroll(1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#0c0c18]/80 border border-[#1a1a3e] flex items-center justify-center text-[#00e5ff] hover:border-[#00e5ff]/40 transition-all duration-300 backdrop-blur glow-on-hover-outline"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-card/80 border border-border flex items-center justify-center text-cyan hover:border-cyan/40 transition-all duration-300 backdrop-blur glow-on-hover-outline"
           >
             <ChevronDown size={18} className="-rotate-90" />
           </button>
@@ -771,16 +804,16 @@ function GallerySection() {
           >
             {galleryImages.map((img, i) => (
               <FadeIn key={i} delay={i * 0.08} className="flex-shrink-0 snap-center">
-                <div className="relative w-72 h-80 rounded-2xl overflow-hidden group border border-[#1a1a3e]/60">
+                <div className="relative w-72 h-80 rounded-2xl overflow-hidden group border border-border/60">
                   <img
                     src={img.url}
                     alt={img.alt}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#06060e]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                    <p className="text-[#e8eaed] text-sm font-display font-bold">{img.alt}</p>
+                    <p className="text-foreground text-sm font-display font-bold">{img.alt}</p>
                   </div>
                 </div>
               </FadeIn>
@@ -817,16 +850,16 @@ const testimonials = [
 function TestimonialsSection() {
   return (
     <section id="testimonials" className="py-32 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00ff88]/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon-green/20 to-transparent" />
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full border border-[#00ff88]/30 bg-[#00ff88]/5 text-[#00ff88] text-xs font-mono-tech tracking-widest uppercase mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-neon-green/30 bg-neon-green/5 text-neon-green text-xs font-mono-tech tracking-widest uppercase mb-6">
             What Clients Say
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-[#e8eaed] mb-4">
-            Client <span className="text-[#00e5ff] text-glow">Testimonials</span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Client <span className="text-cyan text-glow">Testimonials</span>
           </h2>
-          <p className="text-[#6b7280] max-w-xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto">
             Real feedback from businesses we've helped transform through technology.
           </p>
         </FadeIn>
@@ -834,19 +867,19 @@ function TestimonialsSection() {
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {testimonials.map((t, i) => (
             <FadeIn key={t.name} delay={i * 0.15}>
-              <div className="p-8 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60 h-full flex flex-col">
-                <Quote size={24} className="text-[#00e5ff]/30 mb-4" />
-                <p className="text-[#c0c4cc] text-sm leading-relaxed flex-1 mb-6">
+              <div className="p-8 rounded-2xl bg-card border border-border/60 h-full flex flex-col">
+                <Quote size={24} className="text-cyan/30 mb-4" />
+                <p className="text-secondary-foreground text-sm leading-relaxed flex-1 mb-6">
                   "{t.text}"
                 </p>
                 <div className="flex items-center gap-1 mb-3">
                   {Array.from({ length: t.rating }).map((_, j) => (
-                    <Star key={j} size={14} className="text-[#ff6b35] fill-[#ff6b35]" />
+                    <Star key={j} size={14} className="text-orange fill-orange" />
                   ))}
                 </div>
-                <div className="pt-4 border-t border-[#1a1a3e]/60">
-                  <p className="text-[#e8eaed] text-sm font-semibold">{t.name}</p>
-                  <p className="text-[#6b7280] text-xs font-mono-tech">{t.role}</p>
+                <div className="pt-4 border-t border-border/60">
+                  <p className="text-foreground text-sm font-semibold">{t.name}</p>
+                  <p className="text-muted-foreground text-xs font-mono-tech">{t.role}</p>
                 </div>
               </div>
             </FadeIn>
@@ -919,16 +952,16 @@ function ContactSection() {
 
   return (
     <section id="contact" className="py-32 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#7b2ff7]/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-electric/20 to-transparent" />
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full border border-[#7b2ff7]/30 bg-[#7b2ff7]/5 text-[#7b2ff7] text-xs font-mono-tech tracking-widest uppercase mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-electric/30 bg-electric/5 text-electric text-xs font-mono-tech tracking-widest uppercase mb-6">
             Let's Talk
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-[#e8eaed] mb-4">
-            Get in <span className="text-[#00e5ff] text-glow">Touch</span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Get in <span className="text-cyan text-glow">Touch</span>
           </h2>
-          <p className="text-[#6b7280] max-w-xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto">
             Have a project in mind or just want to say hello? We'd love to hear from you.
           </p>
         </FadeIn>
@@ -937,16 +970,16 @@ function ContactSection() {
           <FadeIn direction="right">
             <div className="space-y-6">
               {/* Email card */}
-              <div className="p-6 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60">
+              <div className="p-6 rounded-2xl bg-card border border-border/60">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#00e5ff]/10 flex items-center justify-center shrink-0">
-                    <Mail size={20} className="text-[#00e5ff]" />
+                  <div className="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center shrink-0">
+                    <Mail size={20} className="text-cyan" />
                   </div>
                   <div>
-                    <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Email</p>
+                    <p className="text-muted-foreground text-xs font-mono-tech mb-1">Email</p>
                     <a
                       href="mailto:dineshbohara2073@gmail.com"
-                      className="text-[#e8eaed] hover:text-[#00e5ff] transition-colors text-sm font-semibold"
+                      className="text-foreground hover:text-cyan transition-colors text-sm font-semibold"
                     >
                       dineshbohara2073@gmail.com
                     </a>
@@ -955,16 +988,16 @@ function ContactSection() {
               </div>
 
               {/* Phone card */}
-              <div className="p-6 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60">
+              <div className="p-6 rounded-2xl bg-card border border-border/60">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#00ff88]/10 flex items-center justify-center shrink-0">
-                    <Phone size={20} className="text-[#00ff88]" />
+                  <div className="w-12 h-12 rounded-xl bg-neon-green/10 flex items-center justify-center shrink-0">
+                    <Phone size={20} className="text-neon-green" />
                   </div>
                   <div>
-                    <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Phone</p>
+                    <p className="text-muted-foreground text-xs font-mono-tech mb-1">Phone</p>
                     <a
                       href="tel:+9779749419302"
-                      className="text-[#e8eaed] hover:text-[#00e5ff] transition-colors text-sm font-semibold"
+                      className="text-foreground hover:text-cyan transition-colors text-sm font-semibold"
                     >
                       +977 9749419302
                     </a>
@@ -973,28 +1006,28 @@ function ContactSection() {
               </div>
 
               {/* Creator card */}
-              <div className="p-6 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60">
+              <div className="p-6 rounded-2xl bg-card border border-border/60">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#7b2ff7]/10 flex items-center justify-center shrink-0">
-                    <Globe size={20} className="text-[#7b2ff7]" />
+                  <div className="w-12 h-12 rounded-xl bg-electric/10 flex items-center justify-center shrink-0">
+                    <Globe size={20} className="text-electric" />
                   </div>
                   <div>
-                    <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Founded by</p>
-                    <p className="text-[#e8eaed] text-sm font-semibold">Dinesh Kumar Bohara</p>
-                    <p className="text-[#00e5ff]/60 text-xs font-mono-tech">Undergraduate Student</p>
+                    <p className="text-muted-foreground text-xs font-mono-tech mb-1">Founded by</p>
+                    <p className="text-foreground text-sm font-semibold">Dinesh Kumar Bohara</p>
+                    <p className="text-cyan/60 text-xs font-mono-tech">Undergraduate Student</p>
                   </div>
                 </div>
               </div>
 
               {/* Response time */}
-              <div className="p-6 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60">
+              <div className="p-6 rounded-2xl bg-card border border-border/60">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#ff6b35]/10 flex items-center justify-center shrink-0">
-                    <Zap size={20} className="text-[#ff6b35]" />
+                  <div className="w-12 h-12 rounded-xl bg-orange/10 flex items-center justify-center shrink-0">
+                    <Zap size={20} className="text-orange" />
                   </div>
                   <div>
-                    <p className="text-[#6b7280] text-xs font-mono-tech mb-1">Response Time</p>
-                    <p className="text-[#e8eaed] text-sm font-semibold">Within 24 Hours</p>
+                    <p className="text-muted-foreground text-xs font-mono-tech mb-1">Response Time</p>
+                    <p className="text-foreground text-sm font-semibold">Within 24 Hours</p>
                   </div>
                 </div>
               </div>
@@ -1003,20 +1036,20 @@ function ContactSection() {
 
           <FadeIn direction="left">
             {submitted ? (
-              <div className="h-full flex items-center justify-center p-8 rounded-2xl bg-[#0c0c18] border border-[#00e5ff]/20">
+              <div className="h-full flex items-center justify-center p-8 rounded-2xl bg-card border border-cyan/20">
                 <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-[#00e5ff]/10 flex items-center justify-center mx-auto mb-4">
-                    <Send size={24} className="text-[#00e5ff]" />
+                  <div className="w-16 h-16 rounded-full bg-cyan/10 flex items-center justify-center mx-auto mb-4">
+                    <Send size={24} className="text-cyan" />
                   </div>
-                  <h3 className="font-display text-xl font-bold text-[#e8eaed] mb-2">
+                  <h3 className="font-display text-xl font-bold text-foreground mb-2">
                     Message Ready!
                   </h3>
-                  <p className="text-[#6b7280] text-sm">
+                  <p className="text-muted-foreground text-sm">
                     Your email client should open shortly. Thank you!
                   </p>
                   <button
                     onClick={() => { setSubmitted(false); setFormState({ name: "", email: "", message: "" }); }}
-                    className="mt-4 px-4 py-2 text-xs font-mono-tech text-[#00e5ff] border border-[#00e5ff]/30 rounded-lg hover:bg-[#00e5ff]/5 transition-all duration-300 glow-on-hover-outline"
+                    className="mt-4 px-4 py-2 text-xs font-mono-tech text-cyan border border-cyan/30 rounded-lg hover:bg-cyan/5 transition-all duration-300 glow-on-hover-outline"
                   >
                     Send Another
                   </button>
@@ -1025,44 +1058,44 @@ function ContactSection() {
             ) : (
               <form
                 onSubmit={handleSubmit}
-                className="space-y-5 p-8 rounded-2xl bg-[#0c0c18] border border-[#1a1a3e]/60"
+                className="space-y-5 p-8 rounded-2xl bg-card border border-border/60"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <MessageSquare size={16} className="text-[#00e5ff]" />
-                  <span className="text-[#e8eaed] text-sm font-semibold font-display">Send a Message</span>
+                  <MessageSquare size={16} className="text-cyan" />
+                  <span className="text-foreground text-sm font-semibold font-display">Send a Message</span>
                 </div>
                 <div>
-                  <label className="block text-[#6b7280] text-xs font-mono-tech mb-2">Name</label>
+                  <label className="block text-muted-foreground text-xs font-mono-tech mb-2">Name</label>
                   <input
                     type="text"
                     required
                     value={formState.name}
                     onChange={(e) => { setFormState({ ...formState, name: e.target.value }); if (fieldErrors.name) setFieldErrors((p) => { const n = { ...p }; delete n.name; return n; }); }}
-                    className={`w-full px-4 py-3 rounded-xl bg-[#12122a] border text-[#e8eaed] text-sm focus:outline-none transition-colors placeholder:text-[#6b7280]/50 ${fieldErrors.name ? "border-red-500/60 focus:border-red-500/80" : "border-[#1a1a3e] focus:border-[#00e5ff]/50"}`}
+                    className={`w-full px-4 py-3 rounded-xl bg-secondary border text-foreground text-sm focus:outline-none transition-colors placeholder:text-muted-foreground/50 ${fieldErrors.name ? "border-red-500/60 focus:border-red-500/80" : "border-border focus:border-cyan/50"}`}
                     placeholder="Your name"
                   />
                   {fieldErrors.name && <p className="text-red-400 text-xs mt-1.5 font-mono-tech">{fieldErrors.name}</p>}
                 </div>
                 <div>
-                  <label className="block text-[#6b7280] text-xs font-mono-tech mb-2">Email</label>
+                  <label className="block text-muted-foreground text-xs font-mono-tech mb-2">Email</label>
                   <input
                     type="email"
                     required
                     value={formState.email}
                     onChange={(e) => { setFormState({ ...formState, email: e.target.value }); if (fieldErrors.email) setFieldErrors((p) => { const n = { ...p }; delete n.email; return n; }); }}
-                    className={`w-full px-4 py-3 rounded-xl bg-[#12122a] border text-[#e8eaed] text-sm focus:outline-none transition-colors placeholder:text-[#6b7280]/50 ${fieldErrors.email ? "border-red-500/60 focus:border-red-500/80" : "border-[#1a1a3e] focus:border-[#00e5ff]/50"}`}
+                    className={`w-full px-4 py-3 rounded-xl bg-secondary border text-foreground text-sm focus:outline-none transition-colors placeholder:text-muted-foreground/50 ${fieldErrors.email ? "border-red-500/60 focus:border-red-500/80" : "border-border focus:border-cyan/50"}`}
                     placeholder="you@email.com"
                   />
                   {fieldErrors.email && <p className="text-red-400 text-xs mt-1.5 font-mono-tech">{fieldErrors.email}</p>}
                 </div>
                 <div>
-                  <label className="block text-[#6b7280] text-xs font-mono-tech mb-2">Message</label>
+                  <label className="block text-muted-foreground text-xs font-mono-tech mb-2">Message</label>
                   <textarea
                     required
                     rows={4}
                     value={formState.message}
                     onChange={(e) => { setFormState({ ...formState, message: e.target.value }); if (fieldErrors.message) setFieldErrors((p) => { const n = { ...p }; delete n.message; return n; }); }}
-                    className={`w-full px-4 py-3 rounded-xl bg-[#12122a] border text-[#e8eaed] text-sm focus:outline-none transition-colors resize-none placeholder:text-[#6b7280]/50 ${fieldErrors.message ? "border-red-500/60 focus:border-red-500/80" : "border-[#1a1a3e] focus:border-[#00e5ff]/50"}`}
+                    className={`w-full px-4 py-3 rounded-xl bg-secondary border text-foreground text-sm focus:outline-none transition-colors resize-none placeholder:text-muted-foreground/50 ${fieldErrors.message ? "border-red-500/60 focus:border-red-500/80" : "border-border focus:border-cyan/50"}`}
                     placeholder="Tell us about your project..."
                   />
                   {fieldErrors.message && <p className="text-red-400 text-xs mt-1.5 font-mono-tech">{fieldErrors.message}</p>}
@@ -1075,11 +1108,11 @@ function ContactSection() {
                 <button
                   type="submit"
                   disabled={sending}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider disabled:opacity-50 disabled:cursor-not-allowed glow-on-hover"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-cyan text-background font-bold rounded-xl hover:bg-cyan/90 transition-all duration-300 glow-cyan font-display text-sm tracking-wider disabled:opacity-50 disabled:cursor-not-allowed glow-on-hover"
                 >
                   {sending ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-[#06060e]/30 border-t-[#06060e] rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                       Sending...
                     </>
                   ) : (
@@ -1101,24 +1134,24 @@ function ContactSection() {
 /* ─── Footer ─── */
 function Footer() {
   return (
-    <footer className="border-t border-[#1a1a3e]/60 py-12">
+    <footer className="border-t border-border/60 py-12">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        <p className="font-display text-lg font-bold text-[#00e5ff] text-glow mb-3">
-          MANIAC<span className="text-[#7b2ff7]">.</span>
+        <p className="font-display text-lg font-bold text-cyan text-glow mb-3">
+          MANIAC<span className="text-electric">.</span>
         </p>
-        <p className="text-[#6b7280] text-sm mb-4">
+        <p className="text-muted-foreground text-sm mb-4">
           Crafting premium digital experiences for forward-thinking businesses.
         </p>
         <div className="flex justify-center gap-6 mb-6">
           <a
             href="mailto:dineshbohara2073@gmail.com"
-            className="text-[#6b7280] hover:text-[#00e5ff] transition-colors"
+            className="text-muted-foreground hover:text-cyan transition-colors"
           >
             <Mail size={18} />
           </a>
           <a
             href="tel:+9779749419302"
-            className="text-[#6b7280] hover:text-[#00e5ff] transition-colors"
+            className="text-muted-foreground hover:text-cyan transition-colors"
           >
             <Phone size={18} />
           </a>
@@ -1126,14 +1159,14 @@ function Footer() {
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#6b7280] hover:text-[#00e5ff] transition-colors"
+            className="text-muted-foreground hover:text-cyan transition-colors"
           >
             <Github size={18} />
           </a>
         </div>
-        <p className="text-[#6b7280]/60 text-xs font-mono-tech">
+        <p className="text-muted-foreground/60 text-xs font-mono-tech">
           &copy; {new Date().getFullYear()} Maniac Web Studio. Founded by{" "}
-          <span className="text-[#c0c4cc]">Dinesh Kumar Bohara</span>.
+          <span className="text-secondary-foreground">Dinesh Kumar Bohara</span>.
         </p>
       </div>
     </footer>
@@ -1236,7 +1269,7 @@ function TwinklingStars() {
   ).current;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-50 dark:opacity-100">
       {/* Static twinkling stars */}
       {stars.map((s) => (
         <motion.div
@@ -1312,7 +1345,7 @@ function TwinklingStars() {
 /* ─── Main Landing ─── */
 export default function Landing() {
   return (
-    <div className="dark min-h-screen bg-[#06060e] text-[#e8eaed] relative">
+    <div className="min-h-screen bg-background text-foreground relative">
       <TwinklingStars />
       <div className="relative z-10">
         <Navbar />
