@@ -739,8 +739,8 @@ const galleryImages = [
     alt: "Cybersecurity Concept",
   },
   {
-    url: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
-    alt: "Abstract Neon Lines",
+    url: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80",
+    alt: "Abstract Neon Streaks",
   },
   {
     url: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80",
