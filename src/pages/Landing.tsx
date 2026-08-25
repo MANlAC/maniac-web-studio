@@ -555,7 +555,9 @@ function ShowcaseSection() {
 
               <div className="flex gap-4">
                 <a
-                  href="#contact"
+                  href="https://maniacshop.freebuff.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-[#00e5ff] text-[#06060e] font-bold rounded-xl hover:bg-[#00e5ff]/90 transition-all duration-300 glow-cyan font-display text-xs tracking-wider"
                 >
                   <Play size={14} />
@@ -782,19 +784,19 @@ function GallerySection() {
 /* ─── Testimonials / Comments ─── */
 const testimonials = [
   {
-    name: "Aarav Sharma",
+    name: "Anil Khanal",
     role: "Founder, Nexus Digital",
     text: "Maniac Web Studio delivered a stunning e-commerce platform that tripled our online sales within the first quarter. The attention to detail and performance is outstanding.",
     rating: 5,
   },
   {
-    name: "Sita Thapa",
+    name: "Kaushal Khadka",
     role: "CEO, GreenLeaf Organics",
     text: "Working with Dinesh was a game-changer. He built us a custom inventory management system that saved countless hours every week. Professional, fast, and incredibly skilled.",
     rating: 5,
   },
   {
-    name: "Rajan Gurung",
+    name: "Pradip Dhungana",
     role: "CTO, HimalayaTech",
     text: "The mobile app they developed for us handles thousands of daily users with zero downtime. The code quality and architecture are top-notch. Highly recommended.",
     rating: 5,
@@ -1066,25 +1068,72 @@ function Footer() {
   );
 }
 
+/* ─── Twinkling Stars ─── */
+function TwinklingStars() {
+  const stars = useRef(
+    Array.from({ length: 80 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 2.5 + 0.5,
+      duration: Math.random() * 4 + 2,
+      delay: Math.random() * 5,
+      opacity: Math.random() * 0.6 + 0.1,
+    }))
+  ).current;
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {stars.map((s) => (
+        <motion.div
+          key={s.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${s.x}%`,
+            top: `${s.y}%`,
+            width: s.size,
+            height: s.size,
+            background: `radial-gradient(circle, rgba(0, 229, 255, ${s.opacity}) 0%, rgba(123, 47, 247, ${s.opacity * 0.5}) 100%)`,
+            boxShadow: `0 0 ${s.size * 2}px rgba(0, 229, 255, ${s.opacity * 0.4})`,
+          }}
+          animate={{
+            opacity: [s.opacity * 0.3, s.opacity, s.opacity * 0.3],
+            scale: [0.8, 1.2, 0.8],
+          }}
+          transition={{
+            duration: s.duration,
+            delay: s.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ─── Main Landing ─── */
 export default function Landing() {
   return (
-    <div className="dark min-h-screen bg-[#06060e] text-[#e8eaed]">
-      <Navbar />
-      <HeroSection />
-      <div className="section-divider" />
-      <ServicesSection />
-      <div className="section-divider" />
-      <ShowcaseSection />
-      <div className="section-divider" />
-      <GameSection />
-      <div className="section-divider" />
-      <GallerySection />
-      <div className="section-divider" />
-      <TestimonialsSection />
-      <div className="section-divider" />
-      <ContactSection />
-      <Footer />
+    <div className="dark min-h-screen bg-[#06060e] text-[#e8eaed] relative">
+      <TwinklingStars />
+      <div className="relative z-10">
+        <Navbar />
+        <HeroSection />
+        <div className="section-divider" />
+        <ServicesSection />
+        <div className="section-divider" />
+        <ShowcaseSection />
+        <div className="section-divider" />
+        <GameSection />
+        <div className="section-divider" />
+        <GallerySection />
+        <div className="section-divider" />
+        <TestimonialsSection />
+        <div className="section-divider" />
+        <ContactSection />
+        <Footer />
+      </div>
     </div>
   );
 }
