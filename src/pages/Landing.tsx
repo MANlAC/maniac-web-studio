@@ -651,9 +651,15 @@ function TicTacToe() {
         ))}
       </div>
       <div className="mt-6 text-center">
-        <p className="text-[#6b7280] text-xs font-mono-tech">
+        <p className="text-[#6b7280] text-xs font-mono-tech mb-4">
           Two-player local game — take turns on the same device
         </p>
+        <button
+          onClick={reset}
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#00e5ff]/10 border border-[#00e5ff]/30 text-[#00e5ff] text-sm font-mono-tech font-semibold rounded-xl hover:bg-[#00e5ff]/20 hover:border-[#00e5ff]/50 transition-all duration-300"
+        >
+          ↻ Reset Game & Play Again
+        </button>
       </div>
     </div>
   );
